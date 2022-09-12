@@ -5,7 +5,7 @@ A discord bot that counts the amount of days an user said 'gm' or 'good morning'
 ## Install
 
 ```sh
-make build || python3 -m pip install --user discord python-dotenv
+make build || python3 -m pip install -r requirements.txt
 ```
 
 1. Open [Discord bots](https://discord.com/developers/docs) and create a new application

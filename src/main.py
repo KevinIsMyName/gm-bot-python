@@ -5,15 +5,42 @@ import time
 import json
 import os
 import sys
+
 import discord
 from dotenv import dotenv_values
 
-config = dotenv_values(".env")
+# logger
+import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+FORMAT = '%(levelname)s: "%(pathname)s", line %(lineno)s: %(funcName)s() -> %(message)s'
+formatter = logging.Formatter(FORMAT)
+
+# log to stderr
+ch = logging.StreamHandler()
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
+# log to file
+fh = logging.FileHandler("src/log")
+fh.setFormatter(formatter)
+logger.addHandler(fh)
+
+# load config
+config = dotenv_values(".env")
 TOKEN = config["TOKEN"]
 CHANNEL_ID = int(config["CHANNEL_ID"])
 PREFIX = config["PREFIX"]
-client = discord.Client()
+
+# discord configuration
+intents = discord.Intents.default()
+intents.message_content = True
+client = discord.Client(intents=intents)
+
+# set timezone
+os.environ["TZ"] = "America/New_York"
+time.tzset()
 
 
 def read_dict(filename):
@@ -22,7 +49,7 @@ def read_dict(filename):
     """
     contents = None
     if os.path.isfile(filename):
-        with open(filename, "r", encoding="utf-8") as file:
+        with open(filename, "r") as file:
             contents = file.read().strip()
         return json.loads(contents)
     return {}
@@ -34,21 +61,21 @@ def sec_to_day(t):
 
 def save():
     with open(
-        os.path.join("datastore", "highestStreaks"), "w", encoding="utf-8"
+        os.path.join("datastore", "highestStreaks"),
+        "w",
     ) as file:
         json.dump(high_scores, file)
 
     with open(
-        os.path.join("datastore", "currentStreaks"), "w", encoding="utf-8"
+        os.path.join("datastore", "currentStreaks"),
+        "w",
     ) as file:
         json.dump(cur_scores, file)
 
 
 if not os.path.exists("datastore"):
     os.mkdir("datastore")
-# global high_scores
-# global cur_scores
-# global cur_scores
+
 high_scores = read_dict(os.path.join("datastore", "highestStreaks"))
 cur_scores = read_dict(os.path.join("datastore", "currentStreaks"))
 
@@ -77,7 +104,7 @@ async def on_message(message):
         yesterday_t = message_t - day_t
         yesterday_d = sec_to_day(yesterday_t)
 
-        # Do not count the messages from the bit
+        # Do not count the messages from the bot
         if message.author == client.user:
             return
 
@@ -155,6 +182,11 @@ async def on_message(message):
                 save()
                 await message.add_reaction("👋")
                 sys.exit(0)
+
+        logger.log(
+            logging.DEBUG,
+            f"{time.strftime('%x %X %Z')}: {user_id} sent message -> {content}",
+        )
 
         # Check for 'gm' or 'good morning'
         if content[:2].lower() == "gm" or content[:12].lower() == "good morning":

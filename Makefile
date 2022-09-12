@@ -1,18 +1,19 @@
 LINTER=black
 LINTERFLAGS=-l 100 --preview
 FORMATTER=pylint
-FILE=src/main.py
+MAIN=src/main.py
+PYTHON=python3
 
 run:
 	mkdir -p datastore
-	python3 $(FILE)
+	$(PYTHON) $(MAIN)
 
 build: 
-	pip install python-dotenv black
+	$(PYTHON) pip install -r requirements.txt
 
 lint:
-	$(LINTER) $(LINTERFLAGS) $(FILE)
-	pylint $(FILE)
+	$(LINTER) $(LINTERFLAGS) $(MAIN)
+	pylint $(MAIN)
 
 clean:
 	rm -rf datastore
