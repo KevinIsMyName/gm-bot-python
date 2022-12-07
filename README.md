@@ -26,7 +26,7 @@ make run
 The following commands are supported. Try sending them into the registered channel!
 
 - `.current` to show your current score
-- `.best-best` to show your personal high score
+- `.best` to show your personal high score
 - `.leaderboard` to show the leaderboard
-- `.top5` to show the top 5 highest score
+- `.top5` to show the top 5 highest score (ever)
 - `.help` to show all commands
