@@ -23,7 +23,9 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 # log to file
-fh = logging.FileHandler("src/log")
+LOG_PATH = "logs/"
+os.makedirs(LOG_PATH, exist_ok=True)
+fh = logging.FileHandler(os.path.join(LOG_PATH, datetime.now().strftime("log %Y-%m-%d %H:%M:%S")))
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 
@@ -167,7 +169,7 @@ async def on_message(message):
 
             elif content == f"{PREFIX}help":
                 await message.reply(
-                    "Start a streak by sending *gm* or *good morning*!\n"
+                    "**Start a streak by sending** *gm* **or** *good morning!***\n"
                     f"{PREFIX}current: Show current score\n"
                     f"{PREFIX}best: Show personal highest score\n"
                     f"{PREFIX}leaderboard: Show leaderboard\n"
@@ -189,18 +191,21 @@ async def on_message(message):
         )
 
         # Check for 'gm' or 'good morning'
-        if content[:2].lower() == "gm" or content[:12].lower() == "good morning":
-            await message.add_reaction("☀️")
-        else:
+        if (
+            not content[:2].lower() == "gm"
+            and not content[:12].lower() == "good morning"
+        ):
             return  # Skip non gm-messages
 
         # New user has started a streak.
         if user_id not in high_scores.keys() and user_id not in cur_scores.keys():
             high_scores[user_id] = 1
             cur_scores[user_id] = 1, message_t
+            await message.add_reaction("🌞")
 
         # It is the same day. Nothing happens
         elif sec_to_day(message_t) == sec_to_day(cur_scores[user_id][1]):
+            await message.add_reaction("😴")
             return
 
         # It is the next day. The streak continues
@@ -208,12 +213,14 @@ async def on_message(message):
             score, t = cur_scores[user_id]
             cur_scores[user_id] = score + 1, message_t
             high_scores[user_id] = max(int(high_scores[user_id]), score + 1)
+            await message.add_reaction("☀")
 
         # It is a new day, but not the next day. The streak is broken and restarted
         elif sec_to_day(cur_scores[user_id][1]) != yesterday_d:
             score, t = cur_scores[user_id]
             cur_scores[user_id] = 1, message_t
             high_scores[user_id] = max(int(high_scores[user_id]), score)
+            await message.add_reaction("🌞")
 
     save()
 
