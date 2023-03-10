@@ -1,5 +1,11 @@
 const { Events } = require('discord.js');
-const { allowedChannels, allowedMessagePrefixes } = require('../config.json');
+const { DateTime } = require('luxon');
+const { allowedChannels, allowedMessagePrefixes } = require('../../config.json');
+
+const incrementCountForUserID = (id) => {
+	console.log(`Incrementing for ${id}`);
+	console.log('To be implemented.');
+};
 
 module.exports = {
 	name: Events.MessageCreate,
@@ -9,14 +15,19 @@ module.exports = {
 			return;
 		}
 		const msg = await message.fetch();
-		const content = msg.content;
 		let accepted = false;
 		for (const prefix of allowedMessagePrefixes) {
-			if (content.indexOf(prefix) == 0) {
+			if (msg.content.indexOf(prefix) == 0) {
 				accepted = true;
 				break;
 			}
 		}
-		message.channel.send(`Message was ${accepted ? ' ' : 'not '}accepted for ${message.author}`);
+		message.channel.send(`Message was${accepted ? ' ' : ' not '}accepted for ${message.author}`);
+		if (!accepted) return;
+		console.log(msg);
+		const timestamp = msg.createdTimestamp;
+		const date = new DateTime(timestamp);
+		console.log(date);
+		incrementCountForUserID(message.author.id);
 	},
 };
