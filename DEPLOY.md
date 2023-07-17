@@ -5,7 +5,7 @@
 1. Get a copy of the code using one of the following options
     - Clone a install of the repository from [GitHub](https://github.com/KevinIsMyName/gm-bot) with the `git clone` command
     - Retrieve a working copy the latest data (all streak data is stored in `datastore/`) from tux.cs.drexel.edu with `scp -r <userid>@tux.cs.drexel.edu:<remote-path> <local-path>`.
-        - e.g. `scp -r kw875@tux.cs.drexel.edu:~/code/gm-bot ~/Desktop/gm-bot`
+        - e.g. `scp -r kw875@tux.cs.drexel.edu:~/code/gm-bot ~/Desktop/`
     - Retrieve a working copy from someone (I can send you a zip file of the code and data).
 2. Upload your files to Tux with `scp -r ~/Desktop/gm-bot <user-id>@tux.cs.drexel.edu:~/code/gm-bot`.
 3. SSH into Tux with `ssh <user-id>@tux.cs.drexel.edu`.
